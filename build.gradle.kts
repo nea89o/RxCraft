@@ -1,5 +1,6 @@
 import com.replaymod.gradle.preprocess.PreprocessExtension
 import moe.nea.rxcraft.build.Versions
+import moe.nea.rxcraft.build.parseEnvFile
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 
 plugins {
@@ -29,6 +30,20 @@ repositories {
 	maven("https://maven.minecraftforge.net") {
 		metadataSources {
 			artifact()
+		}
+	}
+}
+
+loom.run {
+	this.runs {
+		this.removeIf { it.name != "client" }
+		this.named("client") {
+			parseEnvFile(file(".env")).forEach { (t, u) ->
+				this.environmentVariable(t, u)
+			}
+			parseEnvFile(file(".properties")).forEach { (t, u) ->
+				this.property(t, u)
+			}
 		}
 	}
 }
